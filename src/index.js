@@ -32,19 +32,19 @@ async function onSearch(el) {
       const responseHits = response.data.hits;
       const totalHits = response.data.totalHits;
 
-      if (responseHits.lenght === 0) {
-        Notiflix.Notify.info(
-          'Sorry, there are no images matching your search query. Please try again.'
+      if (!responseHits.length) {
+        Notiflix.Notify.info('Sorry, there are no images matching your search query. Please try again.'
         );
         el.target.reset();
         galleryItems.innerHTML = '';
         buttonHidden();
         return;
-      }
-     
+      } 
+
       if (!picturesApiService.query) {
-        clearAll();
+        clearPicturesContainer();
         buttonHidden();
+        console.dir(picturesApiService.query);
         Notiflix.Notify.failure('You cannot search by empty field, try again.');
         return;
       } else {
@@ -61,7 +61,9 @@ async function onSearch(el) {
           buttonHidden();
           console.log(totalHits);
           setTimeout(() => {
-            Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+            Notiflix.Notify.info(
+              "We're sorry, but you've reached the end of search results."
+            );
           }, 5000);
           return;
         } else {
@@ -82,14 +84,19 @@ function onLoadMore() {
 
   picturesApiService.fetchPictures().then(response => {
     const responseHits = response.data.hits;
-    galleryItems.insertAdjacentHTML('beforeend', createImageCards(responseHits));
+    galleryItems.insertAdjacentHTML(
+      'beforeend',
+      createImageCards(responseHits)
+    );
     simpleLightbox.refresh();
   });
 
   if (totalHits <= responseHits.length) {
     buttonHidden();
     setTimeout(() => {
-      Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
+      Notiflix.Notify.failure(
+        "We're sorry, but you've reached the end of search results."
+      );
     }, 5000);
   }
   smoothScroll();
